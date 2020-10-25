@@ -1,32 +1,58 @@
 const CustomError = require("../extensions/custom-error");
 
 module.exports = function transform(arr) {
-  throw new CustomError('Not implemented');
-    // remove line with error and write your code here
-  // let resultArr = arr;
-  // if (Array.isArray(arr) == false) {
-  //   throw new Error("TypeError"); 
-  // } else {
-  //   for (let i = 0; i < resultArr.length; i++) {
-  //     if (resultArr[i] == "--discard-next" && i == (resultArr.length - 1) || resultArr[i] == "--double-next" && i == (resultArr.length - 1)) {
-  //       resultArr.splice(i, 1); 
-  //     } else if (resultArr[i] == "--discard-prev" && i == 0 || resultArr[i] == "--double-prev" && i == 0 ) {
-  //       resultArr.splice(i, 1);
-  //     } 
-      
-  //     switch (resultArr[i]) {
-  //       case ("--discard-next"):
-  //         resultArr.splice(i, 2);
-  //       case ("--discard-prev"):
-  //       resultArr.splice(i-1, 2);
-  //       case ("--double-next"):
-  //       resultArr.splice(i, 1, resultArr[i+1]);
-  //       case ("--double-prev"):
-  //       resultArr.splice(i, 1, resultArr[i-1]);
-  //     } 
-  //   } 
-  // }
-  
-  // return resultArr
+ 
+  let resultArr = arr.slice();
+  if (Array.isArray(resultArr) == false) {
+    throw new Error("TypeError"); 
+  } else {
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i] == "--discard-next" && i == (arr.length - 1) ) {
+      resultArr.splice(resultArr.indexOf("--discard-next"), 1);
+      continue;
+      } else if ( arr[i] == "--double-next" && i == (arr.length - 1) ) {
+        resultArr.splice(resultArr.indexOf("--double-next"), 1);
+        continue;
+      } else if (arr[i] == "--discard-prev" && i == 0) {
+        resultArr.splice(resultArr.indexOf("--discard-prev"), 1);
+        continue;
+      } else if (arr[i] == "--double-prev" && i == 0 ) {
+        resultArr.splice(resultArr.indexOf("--double-prev"), 1);
+        continue;
+      } 
+      switch (arr[i]) {
+        case ("--discard-next"):
+          if (resultArr[resultArr.indexOf("--discard-next")+1] === arr[i+1] || Number.isNaN(resultArr[resultArr.indexOf("--discard-next") + 1]) && Number.isNaN(arr[i+1])) {
+            resultArr.splice(resultArr.indexOf("--discard-next"), 2);
+          } else {
+            resultArr.splice(resultArr.indexOf("--discard-next"), 1); 
+          }
+          break;
+        case ("--discard-prev"):
+          if (resultArr[resultArr.indexOf("--discard-prev")-1] === arr[i-1] || Number.isNaN(resultArr[resultArr.indexOf("--discard-prev") - 1]) && Number.isNaN(arr[i-1])) {
+            resultArr.splice(resultArr.indexOf("--discard-prev")-1, 2);
+          } else {
+            resultArr.splice(resultArr.indexOf("--discard-prev"), 1); 
+          }
+          break;
+        case ("--double-next"):
+          if (resultArr[resultArr.indexOf("--double-next")+1] === arr[i+1] || Number.isNaN(resultArr[resultArr.indexOf("--double-next") + 1]) && Number.isNaN(arr[i+1])) {
+            resultArr.splice(resultArr.indexOf("--double-next"), 1, resultArr[resultArr.indexOf("--double-next")+1]);
+          } else {
+            resultArr.splice(resultArr.indexOf("--double-next"), 1); 
+          }
+          break;
+        case ("--double-prev"):
+          if (resultArr[resultArr.indexOf("--double-prev") - 1] === arr[i-1] || Number.isNaN(resultArr[resultArr.indexOf("--double-prev") - 1]) && Number.isNaN(arr[i-1])) {
+            resultArr.splice(resultArr.indexOf("--double-prev"), 1, resultArr[resultArr.indexOf("--double-prev") - 1]);
+          } else {
+            resultArr.splice(resultArr.indexOf("--double-prev"), 1); 
+          }
+          break;
+      } 
+    } 
+  }
+
+  return resultArr
 };
 
